@@ -16,6 +16,8 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
@@ -57,8 +59,8 @@ class OfficeSpaceResource extends Resource
                     ->autosize()
                     ->required(),
 
-                FileUpload::make('thumbail')
-                    ->disk('thumbnail')
+                FileUpload::make('thumbnail')
+                    ->directory('thumbnail')
                     ->required()
             ]);
     }
@@ -67,13 +69,36 @@ class OfficeSpaceResource extends Resource
     {
         return $table
             ->columns([
-                //
+                ImageColumn::make('thumbnail'),
+                TextColumn::make('name')
+                    ->searchable(),
+                TextColumn::make('city.name')
+                    ->searchable(),
+                TextColumn::make('price')
+                    ->money('IDR'),
+                ToggleColumn::make('is_open'),
+                TextColumn::make('is_full')
+                    ->label('Status')
+                    ->getStateUsing(fn(OfficeSpace $record) => match ($record->is_full) {
+                        0 => 'Available',
+                        1 => 'Full Booked',
+                        default => 'Unknown',
+                    })
+                    ->extraAttributes([
+                        'style' => 'color: blue;'
+                    ])->badge()
+                    ->colors([
+                        'success' => fn($state) => $state === 'Available', // Warna hijau untuk 'Available'
+                        'danger' => fn($state) => $state === 'Full Booked', // Warna merah untuk 'Full Booked'
+                        'secondary' => fn($state) => $state === 'Unknown', // Warna abu-abu untuk 'Unknown'
+                    ])
             ])
             ->filters([
                 //
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
