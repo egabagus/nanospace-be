@@ -15,6 +15,13 @@ class BookingTransaction extends Model
     public $timestamps = true;
     protected $guarded = [];
 
+    protected static function booted()
+    {
+        static::creating(function ($model) {
+            $model->booking_trx = self::generateBookingCode();
+        });
+    }
+
     public static function generateBookingCode()
     {
         // Ambil tahun dan bulan saat ini
@@ -31,7 +38,7 @@ class BookingTransaction extends Model
         return $bookingCode;
     }
 
-    public function officeSpaces(): BelongsTo
+    public function office_space(): BelongsTo
     {
         return $this->belongsTo(OfficeSpace::class);
     }

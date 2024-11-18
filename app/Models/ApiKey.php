@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class ApiKey extends Model
 {
     use HasFactory, SoftDeletes;
-    protected $table = "api_key";
+    protected $table = "api_keys";
     public $timestamps = true;
     protected $guarded = [];
 }
