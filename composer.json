@@ -10,7 +10,8 @@
         "laravel/framework": "^11.9",
         "laravel/tinker": "^2.9",
         "rupadana/filament-api-service": "^3.3",
-        "althinect/filament-spatie-roles-permissions": "*"
+        "althinect/filament-spatie-roles-permissions": "*",
+        "awcodes/filament-table-repeater": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

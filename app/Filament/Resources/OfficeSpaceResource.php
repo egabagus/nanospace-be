@@ -2,17 +2,24 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\OfficeSpaceResource\Api\Transformers\OfficeSpaceTransformer;
 use App\Filament\Resources\OfficeSpaceResource\Pages;
 use App\Filament\Resources\OfficeSpaceResource\RelationManagers;
 use App\Models\City;
 use App\Models\OfficeSpace;
+use Awcodes\TableRepeater\Components\TableRepeater;
+use Awcodes\TableRepeater\Header;
 use Filament\Forms;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Support\Enums\Alignment;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
@@ -61,7 +68,50 @@ class OfficeSpaceResource extends Resource
 
                 FileUpload::make('thumbnail')
                     ->directory('thumbnail')
-                    ->required()
+                    ->required(),
+
+                Section::make([
+                    Tabs::make('Tabs')
+                        ->tabs([
+                            Tab::make('Photos')
+                                ->schema([
+                                    TableRepeater::make('photos')
+                                        ->relationship()
+                                        ->headers([
+                                            Header::make('photo')->width('100%')
+                                                ->align(Alignment::Center),
+                                            Header::make('action')->width('10%')
+                                                ->align(Alignment::Center),
+                                        ])
+                                        ->schema([
+                                            FileUpload::make('photo')
+                                                ->directory('photos')
+                                                ->required(),
+                                        ])
+                                ]),
+                            Tab::make('Benefits')
+                                ->schema([
+                                    TableRepeater::make('benefits')
+                                        ->relationship()
+                                        ->headers([
+                                            Header::make('name')->width('50%')
+                                                ->align(Alignment::Center),
+                                            Header::make('icon')->width('50%')
+                                                ->align(Alignment::Center),
+                                            Header::make('action')->width('10%')
+                                                ->align(Alignment::Center),
+                                        ])
+                                        ->schema([
+                                            TextInput::make('name')
+                                                ->required(),
+
+                                            TextInput::make('icon')
+                                                ->label('Icon Url')
+                                        ])
+                                ]),
+
+                        ]),
+                ])
             ]);
     }
 
@@ -121,5 +171,10 @@ class OfficeSpaceResource extends Resource
             'create' => Pages\CreateOfficeSpace::route('/create'),
             'edit' => Pages\EditOfficeSpace::route('/{record}/edit'),
         ];
+    }
+
+    public static function getApiTransformer()
+    {
+        return OfficeSpaceTransformer::class;
     }
 }
