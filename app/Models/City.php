@@ -17,7 +17,7 @@ class City extends Model
     public $timestamps = true;
     protected $guarded = [];
 
-    public function ofiiceSpaces(): HasMany
+    public function officeSpaces(): HasMany
     {
         return $this->hasMany(OfficeSpace::class);
     }

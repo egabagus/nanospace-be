@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\CityResource\Api\Transformers\CityTransformer;
 use App\Filament\Resources\CityResource\Pages;
 use App\Filament\Resources\CityResource\RelationManagers;
 use App\Models\City;
@@ -73,4 +74,9 @@ class CityResource extends Resource
             'edit' => Pages\EditCity::route('/{record}/edit'),
         ];
     }
+
+    // public static function getApiTransformer()
+    // {
+    //     return CityTransformer::class;
+    // }
 }
