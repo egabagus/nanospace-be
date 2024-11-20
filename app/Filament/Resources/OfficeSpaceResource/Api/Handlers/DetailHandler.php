@@ -10,18 +10,18 @@ use Illuminate\Http\Request;
 
 class DetailHandler extends Handlers
 {
-    public static string | null $uri = '/{id}';
+    public static string | null $uri = '/{slug}';
     public static string | null $resource = OfficeSpaceResource::class;
 
 
     public function handler(Request $request)
     {
-        $id = $request->route('id');
-        
+        $slug = $request->route('slug');
+
         $query = static::getEloquentQuery();
 
         $query = QueryBuilder::for(
-            $query->where(static::getKeyName(), $id)
+            $query->where('slug', $slug)
         )
             ->first();
 

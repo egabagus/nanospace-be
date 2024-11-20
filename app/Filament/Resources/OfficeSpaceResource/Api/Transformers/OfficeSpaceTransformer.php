@@ -50,7 +50,7 @@ class OfficeSpaceTransformer extends JsonResource
         }
 
         if ($this->city) {
-            $data['city'][] = [
+            $data['city'] = [
                 'id'    => $this->city->id,
                 'name'  => $this->city->name,
                 'slug'  => $this->city->slug,
@@ -60,6 +60,10 @@ class OfficeSpaceTransformer extends JsonResource
             $data['city'] = null;
         }
 
-        return $data;
+        // return $data;
+        return [
+            'data' => $data,
+            'status' => 'OK'
+        ];
     }
 }

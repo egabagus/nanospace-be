@@ -10,25 +10,33 @@ use Illuminate\Http\Request;
 
 class DetailHandler extends Handlers
 {
-    public static string | null $uri = '/{id}';
+    public static string | null $uri = '/{slug}';
     public static string | null $resource = CityResource::class;
 
 
     public function handler(Request $request)
     {
-        $id = $request->route('id');
-        
+        $slug = $request->route('slug');
+
         $query = static::getEloquentQuery();
 
         $query = QueryBuilder::for(
-            $query->where(static::getKeyName(), $id)
+            $query->where('slug', $slug)
         )
             ->first();
 
         if (!$query) return static::sendNotFoundResponse();
 
-        $transformer = static::getApiTransformer();
+        $data = [
+            'id'        => $query->id,
+            'name'      => $query->name,
+            'slug'      => $query->slug,
+            'photo'     => $query->photo,
+        ];
 
-        return new $transformer($query);
+        return $data;
+        // $transformer = static::getApiTransformer();
+
+        // return new $transformer($query);
     }
 }
