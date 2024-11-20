@@ -1,11 +1,16 @@
 <?php
+
 namespace App\Filament\Resources\BookingTransactionResource\Api\Handlers;
 
 use Illuminate\Http\Request;
 use Rupadana\ApiService\Http\Handlers;
 use App\Filament\Resources\BookingTransactionResource;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+use Throwable;
 
-class CreateHandler extends Handlers {
+class CreateHandler extends Handlers
+{
     public static string | null $uri = '/';
     public static string | null $resource = BookingTransactionResource::class;
 
@@ -14,18 +19,36 @@ class CreateHandler extends Handlers {
         return Handlers::POST;
     }
 
-    public static function getModel() {
+    public static function getModel()
+    {
         return static::$resource::getModel();
     }
 
     public function handler(Request $request)
     {
-        $model = new (static::getModel());
+        DB::beginTransaction();
+        try {
+            $model = new (static::getModel());
 
-        $model->fill($request->all());
+            $start = Carbon::parse($request->start_date);
+            $duration = $request->duration;
+            $end = $start->addDays($duration);
 
-        $model->save();
+            $model->name            = $request->name;
+            $model->phone           = $request->phone;
+            $model->office_space_id = $request->office_space_id;
+            $model->total_amount    = $request->total_amount;
+            $model->duration        = $duration;
+            $model->start           = $request->start_date;
+            $model->end             = $end->toDateString();
 
-        return static::sendSuccessResponse($model, "Successfully Create Resource");
+            $model->save();
+
+            DB::commit();
+            return static::sendSuccessResponse($model, "Successfully Create Resource");
+        } catch (Throwable $th) {
+            DB::rollBack();
+            return static::sendErrorResponse($th->getMessage());
+        }
     }
 }

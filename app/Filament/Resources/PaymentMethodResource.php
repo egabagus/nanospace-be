@@ -6,13 +6,16 @@ use App\Filament\Resources\PaymentMethodResource\Pages;
 use App\Filament\Resources\PaymentMethodResource\RelationManagers;
 use App\Models\PaymentMethod;
 use Filament\Forms;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -36,7 +39,10 @@ class PaymentMethodResource extends Resource
                     ->required()
                     ->label('Number'),
 
-                Textarea::make('desc')
+                Textarea::make('desc'),
+
+                FileUpload::make('thumbnail')
+                    ->directory('payment-method')
             ]);
     }
 
@@ -44,13 +50,17 @@ class PaymentMethodResource extends Resource
     {
         return $table
             ->columns([
+                ImageColumn::make('thumbnail'),
+
                 TextColumn::make('name')
                     ->label('Method Name')
                     ->searchable(),
 
                 TextColumn::make('value')
                     ->label('Value')
-                    ->searchable()
+                    ->searchable(),
+
+                ToggleColumn::make('status')
             ])
             ->filters([
                 //
