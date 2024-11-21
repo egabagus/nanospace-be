@@ -5,6 +5,7 @@ namespace App\Filament\Resources\BookingTransactionResource\Api\Handlers;
 use Illuminate\Http\Request;
 use Rupadana\ApiService\Http\Handlers;
 use App\Filament\Resources\BookingTransactionResource;
+use App\Http\Requests\BookingRequest;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Throwable;
@@ -24,8 +25,9 @@ class CreateHandler extends Handlers
         return static::$resource::getModel();
     }
 
-    public function handler(Request $request)
+    public function handler(BookingRequest $request)
     {
+        // dd($request);
         DB::beginTransaction();
         try {
             $model = new (static::getModel());

@@ -13,6 +13,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -137,12 +138,29 @@ class BookingTransactionResource extends Resource
                 TextColumn::make('duration'),
 
                 TextColumn::make('total_amount')
-                    ->money('IDR')
+                    ->money('IDR'),
+
+                TextColumn::make('is_paid')
+                    ->label('Status')
+                    ->getStateUsing(fn(BookingTransaction $record) => match ($record->is_paid) {
+                        0 => 'Unpaid',
+                        1 => 'Paid',
+                        default => 'Unknown',
+                    })
+                    ->extraAttributes([
+                        'style' => 'color: blue;'
+                    ])->badge()
+                    ->colors([
+                        'success' => fn($state) => $state === 'Paid', // Warna hijau untuk 'Available'
+                        'danger' => fn($state) => $state === 'Unpaid', // Warna merah untuk 'Full Booked'
+                        'secondary' => fn($state) => $state === 'Unknown', // Warna abu-abu untuk 'Unknown'
+                    ])
             ])
             ->filters([
                 //
             ])
             ->actions([
+                ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
